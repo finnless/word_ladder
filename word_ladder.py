@@ -1,5 +1,7 @@
 #!/bin/python3
 
+from collections import deque
+
 
 def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     '''
@@ -29,6 +31,60 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     the function returns `None`.
     '''
 
+    if start_word == end_word:
+        return [start_word]
+
+    # create dictionary
+    with open(dictionary_file, 'r') as f:
+        dictionary = f.read().splitlines()
+
+    # Create a stack
+    stack = []
+    # Push the start word onto the stack
+    stack.append(start_word)
+    '''
+    print('init stack=', stack)
+    '''
+    # Create a queue
+    queue = deque()
+    # Enqueue the stack onto the queue
+    queue.append(stack)
+    '''
+    print("init queue=", queue)
+    '''
+
+    # While the queue is not empty
+    while len(queue) != 0:
+        '''
+        input('Enter to continue...')
+        print("while queue=", queue)
+        '''
+        # Dequeue a stack from the queue
+        stack = queue.popleft()
+        '''
+        print("popped stack=", stack)
+        '''
+        # For each word in the dictionary
+        for word in dictionary:
+            # If the word is adjacent to the top of the stack
+            if _adjacent(word, stack[-1]):
+                # If this word is the end word
+                if word == end_word:
+                    '''done'''
+                    # You are done!
+                    # The front stack plus this word is your word ladder.
+                    stack.append(word)
+                    return stack
+                # Make a copy of the stack
+                stack_copy = stack.copy()
+                # Push the found word onto the copy
+                stack_copy.append(word)
+                # Enqueue the copy
+                queue.append(stack_copy)
+                # Delete word from the dictionary
+                '''PROB GOD AWEFUL'''
+                dictionary.remove(word)
+
 
 def verify_word_ladder(ladder):
     '''
@@ -40,6 +96,10 @@ def verify_word_ladder(ladder):
     >>> verify_word_ladder(['stone', 'shone', 'phony'])
     False
     '''
+    for i in range(len(ladder) - 1):
+        if not _adjacent(ladder[i], ladder[i + 1]):
+            return False
+    return True
 
 
 def _adjacent(word1, word2):
@@ -52,3 +112,13 @@ def _adjacent(word1, word2):
     >>> _adjacent('stone','money')
     False
     '''
+    if len(word1) != len(word2):
+        return False
+    # diff char counter
+    d = 0
+    for i in range(len(word1)):
+        if word1[i] != word2[i]:
+            d += 1
+    if d == 1:
+        return True
+    return False
