@@ -2,7 +2,6 @@
 
 from collections import deque
 
-
 def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     '''
     Returns a list satisfying the following properties:
@@ -31,6 +30,12 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     the function returns `None`.
     '''
 
+    '''
+    prev: ['babes', 'banes', 'wanes', 'wants', 'waits', 'whits', 'white', 'while', 'chile', 'child']
+    added dictionary_copy
+    new: ['babes', 'bares', 'barns', 'carns', 'cains', 'chins', 'chine', 'chile', 'child']
+    '''
+
     if start_word == end_word:
         return [start_word]
 
@@ -42,30 +47,18 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     stack = []
     # Push the start word onto the stack
     stack.append(start_word)
-    '''
-    print('init stack=', stack)
-    '''
     # Create a queue
     queue = deque()
     # Enqueue the stack onto the queue
     queue.append(stack)
-    '''
-    print("init queue=", queue)
-    '''
 
     # While the queue is not empty
     while len(queue) != 0:
-        '''
-        input('Enter to continue...')
-        print("while queue=", queue)
-        '''
         # Dequeue a stack from the queue
         stack = queue.popleft()
-        '''
-        print("popped stack=", stack)
-        '''
         # For each word in the dictionary
-        for word in dictionary:
+        dictionary_copy = dictionary.copy()
+        for word in dictionary_copy:
             # If the word is adjacent to the top of the stack
             if _adjacent(word, stack[-1]):
                 # If this word is the end word
@@ -96,6 +89,8 @@ def verify_word_ladder(ladder):
     >>> verify_word_ladder(['stone', 'shone', 'phony'])
     False
     '''
+    if len(ladder) == 0:
+        return False
     for i in range(len(ladder) - 1):
         if not _adjacent(ladder[i], ladder[i + 1]):
             return False
